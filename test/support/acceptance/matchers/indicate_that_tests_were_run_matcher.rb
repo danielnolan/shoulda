@@ -57,11 +57,21 @@ module AcceptanceTests
       end
 
       def formatted_actual_numbers
-        "Actual numbers: #{find_report_line_in(actual_output).inspect}"
+        report_line = find_report_line_in(actual_output)
+
+        if report_line
+          "Actual numbers: #{report_line.inspect}"
+        else
+          'Actual numbers: (n/a)'
+        end
       end
 
       def actual_numbers
-        parse(actual_output, [:tests, :assertions, :failures, :errors, :skips])
+        numbers = parse(
+          actual_output,
+          [:tests, :assertions, :failures, :errors, :skips],
+        )
+        numbers || {}
       end
 
       def actual_output
@@ -71,9 +81,11 @@ module AcceptanceTests
       def parse(text, pieces)
         report_line = find_report_line_in(text)
 
-        pieces.inject({}) do |hash, piece|
-          number = report_line.match(/(\d+) #{piece}/)[1].to_i
-          hash.merge(piece => number)
+        if report_line
+          pieces.inject({}) do |hash, piece|
+            number = report_line.match(/(\d+) #{piece}/)[1].to_i
+            hash.merge(piece => number)
+          end
         end
       end
 
@@ -84,7 +96,9 @@ module AcceptanceTests
           line =~ /\AFinished in \d\.\d+s\Z/
         end
 
-        lines[index_of_line_with_time + 1]
+        if index_of_line_with_time
+          lines[index_of_line_with_time + 1]
+        end
       end
 
       def format_hash(hash)

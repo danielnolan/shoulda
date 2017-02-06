@@ -1,12 +1,13 @@
 shared_dependencies = proc do
-  gem 'listen'
+  gem 'bcrypt'
+  gem 'jquery-rails'
   gem 'sass-rails'
   gem 'sqlite3'
   gem 'rspec', '~> 3.0'
   gem 'shoulda-context', path: '../shoulda-context'
   gem 'shoulda-matchers', '~> 3.0'
+  # See issue #998 in shoulda-matchers
   gem 'rails-controller-testing'
-  gem 'jquery-rails'
 end
 
 appraise '4.2' do
