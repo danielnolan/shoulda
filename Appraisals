@@ -4,8 +4,8 @@ shared_dependencies = proc do
   gem 'sass-rails'
   gem 'sqlite3'
   gem 'rspec', '~> 3.0'
-  gem 'shoulda-context', path: '../shoulda-context'
-  gem 'shoulda-matchers', '~> 3.0'
+  gem 'shoulda-context', git: 'https://github.com/thoughtbot/shoulda-context'
+  gem 'shoulda-matchers', git: 'https://github.com/thoughtbot/shoulda-matchers'
   # See issue #998 in shoulda-matchers
   gem 'rails-controller-testing'
 end

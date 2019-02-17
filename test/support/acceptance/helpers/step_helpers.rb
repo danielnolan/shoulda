@@ -36,6 +36,10 @@ module AcceptanceTests
       add_minitest_reporters_to_test_helper
     end
 
+    def run_migrations
+      run_rake_tasks!(['db:drop', 'db:create', 'db:migrate'])
+    end
+
     private
 
     def rails_new
