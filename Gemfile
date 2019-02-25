@@ -1,5 +1,7 @@
 source 'https://rubygems.org'
 
+gemspec
+
 gem 'appraisal', '~> 2.1'
 gem 'rails', '>= 4.2', '< 6'
 gem 'pry', git: 'https://github.com/pry/pry.git'

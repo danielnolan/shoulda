@@ -2,11 +2,10 @@ shared_dependencies = proc do
   gem 'bcrypt'
   gem 'jquery-rails'
   gem 'sass-rails'
-  gem 'sqlite3'
+  gem 'sqlite3', '~> 1.3.6'
   gem 'rspec', '~> 3.0'
-  gem 'shoulda-context', git: 'https://github.com/thoughtbot/shoulda-context'
+  gem 'shoulda-context', git: '~/code/tbot/shoulda-context'
   gem 'shoulda-matchers', git: 'https://github.com/thoughtbot/shoulda-matchers'
-  # See issue #998 in shoulda-matchers
   gem 'rails-controller-testing'
 end
 

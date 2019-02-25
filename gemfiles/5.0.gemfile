@@ -17,3 +17,5 @@ gem "rspec", "~> 3.0"
 gem "shoulda-context", :git => "https://github.com/thoughtbot/shoulda-context"
 gem "shoulda-matchers", :git => "https://github.com/thoughtbot/shoulda-matchers"
 gem "rails-controller-testing"
+
+gemspec :path => "../"
