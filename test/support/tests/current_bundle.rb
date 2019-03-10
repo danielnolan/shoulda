@@ -9,13 +9,13 @@ module Tests
 
     def assert_appraisal!
       unless appraisal_in_use?
-        message = <<EOT
+        message = <<MSG
 
 
 Please run tests starting with `appraisal <appraisal_name>`.
 Possible appraisals are: #{available_appraisals}
 
-EOT
+MSG
         raise AppraisalNotSpecified, message
       end
     end
@@ -29,7 +29,7 @@ EOT
     end
 
     def latest_appraisal
-      available_appraisals.sort.last
+      available_appraisals.max
     end
 
     private
@@ -37,7 +37,7 @@ EOT
     def available_appraisals
       appraisals = []
 
-      Appraisal::File.each do |appraisal|
+      Appraisal::AppraisalFile.each do |appraisal|
         appraisals << appraisal.name
       end
 

@@ -6,18 +6,14 @@ module AcceptanceTests
     include FileHelpers
     include GemHelpers
 
+=begin
     def add_shoulda_to_project(options = {})
       AddShouldaToProject.call(options)
     end
+=end
 
-    def run_n_unit_tests(*paths)
-      run_command_within_bundle 'ruby -I lib -I test', *paths
-    end
 
-    def run_n_unit_test_suite
-      run_rake_tasks('test', env: { TESTOPTS: '-v' })
-    end
-
+=begin
     def create_rails_application
       fs.clean
       rails_new
@@ -28,8 +24,6 @@ module AcceptanceTests
     def run_migrations
       run_rake_tasks!(['db:drop', 'db:create', 'db:migrate'])
     end
-
-    private
 
     def rails_new
       command = "bundle exec rails new #{fs.project_directory} --skip-bundle --no-rc --skip-turbolinks --skip-listen"
@@ -64,5 +58,6 @@ module AcceptanceTests
         Minitest::Reporters.use!(Minitest::Reporters::SpecReporter.new)
       FILE
     end
+=end
   end
 end

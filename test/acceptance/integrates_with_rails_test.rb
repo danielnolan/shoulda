@@ -1,11 +1,11 @@
 require 'acceptance_test_helper'
 
 class ShouldaIntegratesWithRailsTest < AcceptanceTest
-  def test_succeeding_assertions
-    create_rails_application_with_shoulda
+  def setup
+    app.create
 
-    write_file 'db/migrate/1_create_users.rb', <<-FILE
-      class CreateUsers < ActiveRecord::Migration
+    app.write_file 'db/migrate/1_create_users.rb', <<-FILE
+      class CreateUsers < #{app.migration_class_name}
         def self.up
           create_table :categories_users do |t|
             t.integer :category_id
@@ -40,29 +40,29 @@ class ShouldaIntegratesWithRailsTest < AcceptanceTest
       end
     FILE
 
-    run_migrations
+    app.run_migrations!
 
-    write_file 'app/models/category.rb', <<-FILE
+    app.write_file 'app/models/category.rb', <<-FILE
       class Category < ActiveRecord::Base
       end
     FILE
 
-    write_file 'app/models/city.rb', <<-FILE
+    app.write_file 'app/models/city.rb', <<-FILE
       class City < ActiveRecord::Base
       end
     FILE
 
-    write_file 'app/models/issue.rb', <<-FILE
+    app.write_file 'app/models/issue.rb', <<-FILE
       class Issue < ActiveRecord::Base
       end
     FILE
 
-    write_file 'app/models/life.rb', <<-FILE
+    app.write_file 'app/models/life.rb', <<-FILE
       class Life < ActiveRecord::Base
       end
     FILE
 
-    write_file 'app/models/person.rb', <<-FILE
+    app.write_file 'app/models/person.rb', <<-FILE
       class Person
         include ActiveModel::Model
         include ActiveModel::SecurePassword
@@ -113,7 +113,7 @@ class ShouldaIntegratesWithRailsTest < AcceptanceTest
       end
     FILE
 
-    write_file 'app/models/user.rb', <<-FILE
+    app.write_file 'app/models/user.rb', <<-FILE
       class User < ActiveRecord::Base
         belongs_to :city
         enum status: { inactive: 0, active: 1 }
@@ -127,7 +127,7 @@ class ShouldaIntegratesWithRailsTest < AcceptanceTest
       end
     FILE
 
-    write_file 'app/controllers/examples_controller.rb', <<-FILE
+    app.write_file 'app/controllers/examples_controller.rb', <<-FILE
       class ExamplesController < ApplicationController
         before_action :some_before_action
         after_action :some_after_action
@@ -170,17 +170,19 @@ class ShouldaIntegratesWithRailsTest < AcceptanceTest
       end
     FILE
 
-    write_file 'app/views/examples/index.html.erb', <<-FILE
+    app.write_file 'app/views/examples/index.html.erb', <<-FILE
       Some content here
     FILE
 
-    write_file 'config/routes.rb', <<-FILE
+    app.write_file 'config/routes.rb', <<-FILE
       Rails.application.routes.draw do
         resources :examples, only: [:index, :create]
       end
     FILE
+  end
 
-    write_file 'test/models/person_test.rb', <<-FILE
+  def test_succeeding_assertions
+    app.write_file 'test/models/person_test.rb', <<-FILE
       require 'test_helper'
 
       class PersonTest < ActiveSupport::TestCase
@@ -220,7 +222,7 @@ class ShouldaIntegratesWithRailsTest < AcceptanceTest
       end
     FILE
 
-    write_file 'test/models/user_test.rb', <<-FILE
+    app.write_file 'test/models/user_test.rb', <<-FILE
       require 'test_helper'
 
       class UserTest < ActiveSupport::TestCase
@@ -259,7 +261,7 @@ class ShouldaIntegratesWithRailsTest < AcceptanceTest
       end
     FILE
 
-    write_file 'test/controllers/examples_controller_test.rb', <<-FILE
+    app.write_file 'test/controllers/examples_controller_test.rb', <<-FILE
       require 'test_helper'
 
       class ExamplesControllerTest < ActionController::TestCase
@@ -298,12 +300,21 @@ class ShouldaIntegratesWithRailsTest < AcceptanceTest
 
         context "POST #create" do
           setup do
-            post :create, params: {
-              user: {
-                email: "some@email.com",
-                password: "somepassword"
+            if ActionPack::VERSION::STRING.start_with?("4.")
+              post :create, {
+                user: {
+                  email: "some@email.com",
+                  password: "somepassword"
+                }
               }
-            }
+            else
+              post :create, params: {
+                user: {
+                  email: "some@email.com",
+                  password: "somepassword"
+                }
+              }
+            end
           end
 
           should permit(:email, :password).
@@ -335,196 +346,21 @@ class ShouldaIntegratesWithRailsTest < AcceptanceTest
       end
     FILE
 
-    result = run_n_unit_test_suite
+    result = app.run_n_unit_test_suite
 
     assert_accepts indicate_that_tests_were_run(failures: 0), result
   end
 
   def test_failing_assertions
-    create_rails_application_with_shoulda
-
-    write_file 'db/migrate/1_create_users.rb', <<-FILE
-      class CreateUsers < ActiveRecord::Migration
-        def self.up
-          create_table :categories_users do |t|
-            t.integer :category_id
-            t.integer :user_id
-          end
-
-          create_table :categories do |t|
-          end
-
-          create_table :cities do |t|
-          end
-
-          create_table :lives do |t|
-            t.integer :user_id
-          end
-
-          create_table :issues do |t|
-            t.integer :user_id
-          end
-
-          create_table :users do |t|
-            t.integer :account_id
-            t.integer :city_id
-            t.string :email
-            t.integer :age
-            t.integer :status
-            t.string :aspects
-          end
-
-          add_index :users, :account_id
-        end
-      end
-    FILE
-
-    run_migrations
-
-    write_file 'app/models/category.rb', <<-FILE
-      class Category < ActiveRecord::Base
-      end
-    FILE
-
-    write_file 'app/models/city.rb', <<-FILE
-      class City < ActiveRecord::Base
-      end
-    FILE
-
-    write_file 'app/models/issue.rb', <<-FILE
-      class Issue < ActiveRecord::Base
-      end
-    FILE
-
-    write_file 'app/models/life.rb', <<-FILE
-      class Life < ActiveRecord::Base
-      end
-    FILE
-
-    write_file 'app/models/person.rb', <<-FILE
-      class Person
-        include ActiveModel::Model
-        include ActiveModel::SecurePassword
-
-        attr_accessor(
-          :age,
-          :card_number,
-          :email,
-          :foods,
-          :nothing,
-          :password_digest,
-          :some_other_attribute,
-          :some_other_attribute_confirmation,
-          :something,
-          :terms_of_service,
-          :workouts,
-          :some_other_attribute,
-        )
-
-        validates_absence_of :nothing
-        validates_acceptance_of :terms_of_service
-        validates_confirmation_of :password
-        validates_exclusion_of :workouts, in: ["biceps"]
-        validates_inclusion_of :foods, in: ["spaghetti"]
-        validates_length_of :card_number, maximum: 16
-        validates_numericality_of :age
-        validates_presence_of :something
-
-        validate :email_looks_like_an_email
-
-        delegate :a_method, to: :some_delegate_object
-
-        def some_delegate_object
-          Object.new.instance_eval do
-            def a_method; end
-          end
-        end
-
-        private
-
-        def email_looks_like_an_email
-          if email !~ /@/
-            errors.add :email, "invalid"
-          end
-        end
-      end
-    FILE
-
-    write_file 'app/models/user.rb', <<-FILE
-      class User < ActiveRecord::Base
-        belongs_to :city
-        enum status: { inactive: 0, active: 1 }
-        attr_readonly :username
-        has_and_belongs_to_many :categories
-        has_many :issues
-        has_one :life
-        serialize :aspects
-        validates_uniqueness_of :email
-        accepts_nested_attributes_for :issues
-      end
-    FILE
-
-    write_file 'app/controllers/examples_controller.rb', <<-FILE
-      class ExamplesController < ApplicationController
-        before_action :some_before_action
-        after_action :some_after_action
-        around_action :some_around_action
-
-        rescue_from ActiveRecord::RecordNotFound, with: :handle_not_found
-
-        layout "application"
-
-        def index
-          render :index
-          head :ok
-        end
-
-        def create
-          create_params
-          flash[:success] = "Example created"
-          session[:some_key] = "some value"
-          redirect_to action: :index
-        end
-
-        def handle_not_found
-        end
-
-        private
-
-        def some_before_action
-        end
-
-        def some_after_action
-        end
-
-        def some_around_action
-          yield
-        end
-
-        def create_params
-          params.require(:user).permit(:email, :password)
-        end
-      end
-    FILE
-
-    write_file 'app/views/examples/index.html.erb', <<-FILE
-      Some content here
-    FILE
-
-    write_file 'config/routes.rb', <<-FILE
-      Rails.application.routes.draw do
-        resources :examples, only: [:index, :create]
-      end
-    FILE
-
-    write_file 'test/models/person_test.rb', <<-FILE
+    app.write_file 'test/models/person_test.rb', <<-FILE
       require 'test_helper'
 
       class PersonTest < ActiveSupport::TestCase
         should_not allow_value("john@smith.com").for(:email)
         should allow_value("john").for(:email)
 
-        should have_secure_password
+        # FIXME: See #1187 in shoulda-matchers
+        #should_not have_secure_password
 
         should_not validate_absence_of(:nothing)
         should validate_absence_of(:some_other_attribute)
@@ -557,7 +393,7 @@ class ShouldaIntegratesWithRailsTest < AcceptanceTest
       end
     FILE
 
-    write_file 'test/models/user_test.rb', <<-FILE
+    app.write_file 'test/models/user_test.rb', <<-FILE
       require 'test_helper'
 
       class UserTest < ActiveSupport::TestCase
@@ -596,7 +432,7 @@ class ShouldaIntegratesWithRailsTest < AcceptanceTest
       end
     FILE
 
-    write_file 'test/controllers/examples_controller_test.rb', <<-FILE
+    app.write_file 'test/controllers/examples_controller_test.rb', <<-FILE
       require 'test_helper'
 
       class ExamplesControllerTest < ActionController::TestCase
@@ -635,12 +471,21 @@ class ShouldaIntegratesWithRailsTest < AcceptanceTest
 
         context "POST #create" do
           setup do
-            post :create, params: {
-              user: {
-                email: "some@email.com",
-                password: "somepassword"
+            if ActionPack::VERSION::STRING.start_with?("4.")
+              post :create, {
+                user: {
+                  email: "some@email.com",
+                  password: "somepassword"
+                }
               }
-            }
+            else
+              post :create, params: {
+                user: {
+                  email: "some@email.com",
+                  password: "somepassword"
+                }
+              }
+            end
           end
 
           should_not permit(:email, :password).
@@ -672,21 +517,21 @@ class ShouldaIntegratesWithRailsTest < AcceptanceTest
       end
     FILE
 
-    result = run_n_unit_test_suite
+    result = app.run_n_unit_test_suite
 
-    assert_accepts indicate_that_tests_were_run(failures: 0), result
+    assert_accepts indicate_that_tests_were_run(failures: 68), result
   end
 
-  private
+  # private
 
-  def create_rails_application_with_shoulda
-    create_rails_application
+  # def create_rails_application_with_shoulda
+    # create_rails_application
 
-    updating_bundle do
-      add_shoulda_to_project(
-        test_framework: :minitest,
-        libraries: [:rails],
-      )
-    end
-  end
+    # updating_bundle do
+      # add_shoulda_to_project(
+        # test_framework: :minitest,
+        # libraries: [:rails],
+      # )
+    # end
+  # end
 end

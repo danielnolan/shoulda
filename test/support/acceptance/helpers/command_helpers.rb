@@ -5,6 +5,7 @@ module AcceptanceTests
   module CommandHelpers
     include BaseHelpers
 
+=begin
     def run_command(*args)
       Tests::CommandRunner.run(*args) do |runner|
         runner.directory = fs.project_directory
@@ -50,5 +51,6 @@ module AcceptanceTests
       args = ['bundle', 'exec', 'rake', *tasks, '--trace'] + [options]
       run_command!(*args)
     end
+=end
   end
 end

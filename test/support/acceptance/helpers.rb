@@ -11,9 +11,5 @@ module AcceptanceTests
     include CommandHelpers
     include GemHelpers
     include StepHelpers
-
-    def setup
-      fs.clean
-    end
   end
 end
