@@ -20,21 +20,25 @@ class RailsApplicationWithShoulda < Snowglobe::RailsApplication
 
       Minitest::Reporters.use!(Minitest::Reporters::SpecReporter.new)
 
-      require "rails/test_unit/reporter"
+      begin
+        require "rails/test_unit/reporter"
 
-      # Patch Rails' reporter for Minitest so that it looks for the test
-      # correctly under Minitest 5.11
-      # See: <https://github.com/rails/rails/pull/31624>
-      Rails::TestUnitReporter.class_eval do
-        def format_rerun_snippet(result)
-          location, line = if result.respond_to?(:source_location)
-            result.source_location
-          else
-            result.method(result.name).source_location
+        # Patch Rails' reporter for Minitest so that it looks for the test
+        # correctly under Minitest 5.11
+        # See: <https://github.com/rails/rails/pull/31624>
+        Rails::TestUnitReporter.class_eval do
+          def format_rerun_snippet(result)
+            location, line = if result.respond_to?(:source_location)
+              result.source_location
+            else
+              result.method(result.name).source_location
+            end
+
+            "\#{executable} \#{relative_path_for(location)}:\#{line}"
           end
-
-          "\#{executable} \#{relative_path_for(location)}:\#{line}"
         end
+      rescue LoadError
+        # Okay, rails/test_unit/reporter isn't a thing, no big deal
       end
     FILE
   end
