@@ -181,7 +181,7 @@ class ShouldaIntegratesWithRailsTest < AcceptanceTest
     FILE
   end
 
-  def test_succeeding_assertions
+  def test_succeeding_assertions_1
     app.write_file 'test/models/person_test.rb', <<-FILE
       require 'test_helper'
 
@@ -222,6 +222,12 @@ class ShouldaIntegratesWithRailsTest < AcceptanceTest
       end
     FILE
 
+    result = app.run_n_unit_test_suite
+
+    assert_accepts indicate_that_tests_were_run(failures: 0), result
+  end
+
+  def test_succeeding_assertions_2
     app.write_file 'test/models/user_test.rb', <<-FILE
       require 'test_helper'
 
@@ -261,6 +267,12 @@ class ShouldaIntegratesWithRailsTest < AcceptanceTest
       end
     FILE
 
+    result = app.run_n_unit_test_suite
+
+    assert_accepts indicate_that_tests_were_run(failures: 0), result
+  end
+
+  def test_succeeding_assertions_3
     app.write_file 'test/controllers/examples_controller_test.rb', <<-FILE
       require 'test_helper'
 
@@ -351,7 +363,7 @@ class ShouldaIntegratesWithRailsTest < AcceptanceTest
     assert_accepts indicate_that_tests_were_run(failures: 0), result
   end
 
-  def test_failing_assertions
+  def test_failing_assertions_1
     app.write_file 'test/models/person_test.rb', <<-FILE
       require 'test_helper'
 
@@ -393,6 +405,12 @@ class ShouldaIntegratesWithRailsTest < AcceptanceTest
       end
     FILE
 
+    result = app.run_n_unit_test_suite
+
+    assert_accepts indicate_that_tests_were_run(failures: 20), result
+  end
+
+  def test_failing_assertions_2
     app.write_file 'test/models/user_test.rb', <<-FILE
       require 'test_helper'
 
@@ -432,6 +450,12 @@ class ShouldaIntegratesWithRailsTest < AcceptanceTest
       end
     FILE
 
+    result = app.run_n_unit_test_suite
+
+    assert_accepts indicate_that_tests_were_run(failures: 22), result
+  end
+
+  def test_failing_assertions_3
     app.write_file 'test/controllers/examples_controller_test.rb', <<-FILE
       require 'test_helper'
 
@@ -519,19 +543,6 @@ class ShouldaIntegratesWithRailsTest < AcceptanceTest
 
     result = app.run_n_unit_test_suite
 
-    assert_accepts indicate_that_tests_were_run(failures: 68), result
+    assert_accepts indicate_that_tests_were_run(failures: 26), result
   end
-
-  # private
-
-  # def create_rails_application_with_shoulda
-    # create_rails_application
-
-    # updating_bundle do
-      # add_shoulda_to_project(
-        # test_framework: :minitest,
-        # libraries: [:rails],
-      # )
-    # end
-  # end
 end
