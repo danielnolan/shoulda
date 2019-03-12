@@ -29,5 +29,5 @@ gemfile:
 
 matrix:
   exclude:
-    - rvm: 2.6.0
+    - rvm: 2.6.1
       gemfile: gemfiles/rails_4_2.gemfile
