@@ -5,12 +5,6 @@ GIT
     snowglobe (0.1.0)
 
 GIT
-  remote: https://github.com/thoughtbot/shoulda-context
-  revision: ce853d9bb0a9d0120383aca54d240687a2fb94a3
-  specs:
-    shoulda-context (1.2.2)
-
-GIT
   remote: https://github.com/thoughtbot/shoulda-matchers
   revision: 0d898974c68fe058def6bf00754460a2be495525
   specs:
@@ -24,6 +18,11 @@ PATH
       appraisal (~> 2.1)
       bundler (~> 1.0)
       rubocop
+
+PATH
+  remote: /Users/elliot/code/personal/shoulda-context
+  specs:
+    shoulda-context (1.2.2)
 
 GEM
   remote: https://rubygems.org/
